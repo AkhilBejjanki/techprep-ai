@@ -4,7 +4,7 @@ An AI-powered web app built using **Flask** and **Google’s Gemini API** that h
 
 ---
 
-## 🚀 Features
+##  Features
 
 -  **AI-Powered Answers:** Uses Google's Gemini 2.5 model to generate relevant and concise answers.  
 -  **Point-Wise Format:** Gives short, readable bullet points instead of long paragraphs.  
@@ -14,15 +14,15 @@ An AI-powered web app built using **Flask** and **Google’s Gemini API** that h
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Component | Technology |
 |------------|-------------|
-| **Frontend** | HTML, CSS, Google Fonts |
+| **Frontend** | HTML, CSS, |
 | **Backend** | Python (Flask) |
 | **AI Model** | Google Gemini 2.5 (via Google Generative AI API) |
 | **Environment Variables** | python-dotenv |
-| **Styling** | Custom CSS + Google Fonts (Poppins, Inter) |
+| **Styling** | Custom CSS  |
 
 
 
