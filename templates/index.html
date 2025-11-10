@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>techPrep AI</title>
+</head>
+<body style="font-family: Arial; background-color: #f4f4f4; color: #333; text-align: center; padding: 50px;">
+<h1>techPrep AI</h1>
+
+<form method="POST" style="margin-top: 20px;">
+    <textarea name="question" rows="4" cols="60" placeholder="Ask a technical question..." required></textarea><br><br>
+    <button type="submit" style="padding: 10px 20px;">Generate Answer</button>
+</form>
+
+{% if answer %}
+<div style="margin-top: 30px; background-color: white; padding: 20px; border-radius: 10px; width: 60%; margin: 30px auto; text-align: left;">
+    <h3>Question:</h3>
+    <p>{{ question }}</p>
+    <h3>Answer:</h3>
+    <pre style="white-space: pre-wrap;">{{ answer }}</pre>
+</div>
+{% endif %}
+</body>
+</html>
