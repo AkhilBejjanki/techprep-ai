@@ -25,4 +25,12 @@ An AI-powered web app built using **Flask** and **Google’s Gemini API** that h
 | **Styling** | Custom CSS  |
 
 
+---
+
+## Live Demo
+
+Check out the live website here 👇  
+🔗 **[TechPrep AI — Live App](https://techprep-ai-pf7n.onrender.com)**
+
+---
 
