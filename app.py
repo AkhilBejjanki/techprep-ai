@@ -25,7 +25,7 @@ def is_technical_question(question):
         "python", "java", "sql", "dbms", "machine learning", "ai", "html", "css", "react", "data",
         "algorithm", "dsa", "flask", "django", "oop", "object oriented", "cloud", "networking",
         "operating system", "linux", "c++", "coding", "programming", "array", "loop", "variable",
-        "api", "function", "database", "pandas", "numpy", "tensorflow", "project", "developer"
+        "api", "function", "database", "pandas", "numpy", "tensorflow", "project", "developer","go language"
     ]
     question_lower = question.lower()
     return any(keyword in question_lower for keyword in technical_keywords)
