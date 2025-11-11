@@ -1,25 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>techPrep AI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechPrep AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Base layout */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      color: #1f2937;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px 35px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 700px;
+      width: 100%;
+      transition: all 0.3s ease-in-out;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1e3a8a;
+      font-size: 28px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      font-size: 16px;
+      resize: none;
+      outline: none;
+      margin-top: 15px;
+      transition: 0.2s;
+    }
+
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+    }
+
+    .mode-select {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 15px;
+      color: #374151;
+    }
+
+    .mode-select label {
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    .button-group {
+      text-align: center;
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .output-box {
+      margin-top: 25px;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 15px;
+      line-height: 1.8;
+      white-space: normal;
+      color: #1f2937;
+    }
+
+    .answer-list {
+      margin: 0;
+      padding-left: 1.3rem;
+      line-height: 1.8;
+    }
+
+    .answer-list li {
+      margin: 0.6rem 0;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    .action-buttons {
+      text-align: center;
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .message {
+      color: #dc2626;
+      font-weight: 500;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* 🔹 Mobile Optimization */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+        border-radius: 16px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      textarea {
+        font-size: 14px;
+        height: 70px;
+      }
+      button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+      .answer-list li {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
-<body style="font-family: Arial; background-color: #f4f4f4; color: #333; text-align: center; padding: 50px;">
-<h1>techPrep AI</h1>
+<body>
+  <div class="container">
+    <h1>⚡ TechPrep AI</h1>
+    <form method="POST">
+      <textarea name="question" placeholder="Enter your technical question...">{{ question }}</textarea>
 
-<form method="POST" style="margin-top: 20px;">
-    <textarea name="question" rows="4" cols="60" placeholder="Ask a technical question..." required></textarea><br><br>
-    <button type="submit" style="padding: 10px 20px;">Generate Answer</button>
-</form>
+      <div class="mode-select">
+        <label><input type="radio" name="mode" value="normal" checked> Normal</label>
+        <label><input type="radio" name="mode" value="simple"> Simplified</label>
+      </div>
 
-{% if answer %}
-<div style="margin-top: 30px; background-color: white; padding: 20px; border-radius: 10px; width: 60%; margin: 30px auto; text-align: left;">
-    <h3>Question:</h3>
-    <p>{{ question }}</p>
-    <h3>Answer:</h3>
-    <pre style="white-space: pre-wrap;">{{ answer }}</pre>
-</div>
-{% endif %}
+      <div class="button-group">
+        <button type="submit">Generate Answer</button>
+        <button type="submit" name="suggest">Suggest Topic</button>
+      </div>
+    </form>
+
+    {% if message %}
+      <p class="message">{{ message }}</p>
+    {% endif %}
+
+    {% if answer_items %}
+      <div class="output-box" id="answerBox">
+        <strong>Answer:</strong><br><br>
+        <ol class="answer-list">
+          {% for item in answer_items %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ol>
+      </div>
+
+      <div class="action-buttons">
+        <button id="copyBtn" type="button">📋 Copy Answer</button>
+        <form action="/download" method="POST" style="display:inline;">
+          <input type="hidden" name="answer_text" value="{{ '\n'.join(answer_items) }}">
+          <button type="submit">⬇️ Download as PDF</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById("copyBtn");
+    copyBtn?.addEventListener("click", () => {
+      const text = document.getElementById("answerBox").innerText;
+      navigator.clipboard.writeText(text);
+      copyBtn.innerText = "✅ Copied!";
+      setTimeout(() => (copyBtn.innerText = "📋 Copy Answer"), 2000);
+    });
+  </script>
 </body>
 </html>
