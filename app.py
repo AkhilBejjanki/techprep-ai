@@ -48,8 +48,14 @@ def home():
 
             prompt = f"""
 You are an AI interview assistant.
-Answer only technical or programming-related questions in 5–8 short, point-wise statements.
-If the question is non-technical, respond with "This question is out of technical scope."
+
+Your task:
+1. Answer ONLY technical or programming-related questions.
+2. Always respond in a numbered, point-wise format.
+3. Each point should start with a number followed by a short explanation (e.g., "1. ...").
+4. Keep answers clean and concise (around 5–8 points).
+5. Do NOT include any markdown symbols or special characters.
+
 Question: {question}
 """
             response = model.generate_content([prompt])
