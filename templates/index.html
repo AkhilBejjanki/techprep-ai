@@ -130,7 +130,7 @@
       text-align: center;
     }
 
-    /* 🔹 Mobile Optimization */
+    /*  Mobile Optimization */
     @media (max-width: 600px) {
       .container {
         padding: 20px;
@@ -185,10 +185,10 @@
       </div>
 
       <div class="action-buttons">
-        <button id="copyBtn" type="button">📋 Copy Answer</button>
+        <button id="copyBtn" type="button">Copy Answer</button>
         <form action="/download" method="POST" style="display:inline;">
           <input type="hidden" name="answer_text" value="{{ '\n'.join(answer_items) }}">
-          <button type="submit">⬇️ Download as PDF</button>
+          <button type="submit">Download as PDF</button>
         </form>
       </div>
     {% endif %}
@@ -199,8 +199,8 @@
     copyBtn?.addEventListener("click", () => {
       const text = document.getElementById("answerBox").innerText;
       navigator.clipboard.writeText(text);
-      copyBtn.innerText = "✅ Copied!";
-      setTimeout(() => (copyBtn.innerText = "📋 Copy Answer"), 2000);
+      copyBtn.innerText = "Successfully Copied!";
+      setTimeout(() => (copyBtn.innerText = "Copy Answer"), 2000);
     });
   </script>
 </body>
