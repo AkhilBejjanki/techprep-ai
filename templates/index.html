@@ -1,207 +1,707 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TechPrep AI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechPrep AI - Smart Technical Interview Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <style>
-    /* Base layout */
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f9fafb;
-      color: #1f2937;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f7f8;
+            --text-primary: #000000;
+            --text-secondary: #6b6b6b;
+            --border-color: #e5e5e5;
+            --user-msg-bg: #f7f7f8;
+            --ai-msg-bg: #ffffff;
+            --input-bg: #ffffff;
+            --button-hover: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
 
-    .container {
-      background: #fff;
-      padding: 30px 35px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      max-width: 700px;
-      width: 100%;
-      transition: all 0.3s ease-in-out;
-    }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #212121;
+                --bg-secondary: #2f2f2f;
+                --text-primary: #ececec;
+                --text-secondary: #b3b3b3;
+                --border-color: #3f3f3f;
+                --user-msg-bg: #2f2f2f;
+                --ai-msg-bg: #212121;
+                --input-bg: #2f2f2f;
+                --button-hover: #3f3f3f;
+                --code-bg: #1a1a1a;
+            }
+        }
 
-    h1 {
-      text-align: center;
-      color: #1e3a8a;
-      font-size: 28px;
-      margin-bottom: 20px;
-      font-weight: 700;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-    textarea {
-      width: 100%;
-      height: 90px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      padding: 12px;
-      font-size: 16px;
-      resize: none;
-      outline: none;
-      margin-top: 15px;
-      transition: 0.2s;
-    }
+        .header {
+            padding: 20px 20px 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            text-align: center;
+            z-index: 10;
+        }
 
-    textarea:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
-    }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
 
-    .mode-select {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 15px;
-      color: #374151;
-    }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
 
-    .mode-select label {
-      margin: 0 10px;
-      cursor: pointer;
-    }
+        .message {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
 
-    .button-group {
-      text-align: center;
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
+        .message.user {
+            justify-content: flex-end;
+        }
 
-    button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+        .message.ai {
+            justify-content: flex-start;
+        }
 
-    button:hover {
-      background: #1d4ed8;
-    }
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
 
-    .output-box {
-      margin-top: 25px;
-      background: #f1f5f9;
-      border-radius: 12px;
-      padding: 20px;
-      font-size: 15px;
-      line-height: 1.8;
-      white-space: normal;
-      color: #1f2937;
-    }
+        .message.user .message-content {
+            background-color: var(--user-msg-bg);
+            border: 1px solid var(--border-color);
+        }
 
-    .answer-list {
-      margin: 0;
-      padding-left: 1.3rem;
-      line-height: 1.8;
-    }
+        .message.ai .message-content {
+            background-color: var(--ai-msg-bg);
+            border: 1px solid var(--border-color);
+            position: relative;
+            padding-top: 44px;
+        }
 
-    .answer-list li {
-      margin: 0.6rem 0;
-      text-align: left;
-      font-size: 15px;
-    }
+        .button-group {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
 
-    .action-buttons {
-      text-align: center;
-      margin-top: 15px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
+        .copy-button, .download-button {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            font-family: inherit;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
 
-    .message {
-      color: #dc2626;
-      font-weight: 500;
-      margin-top: 10px;
-      text-align: center;
-    }
+        .copy-button:hover, .download-button:hover {
+            background-color: var(--button-hover);
+        }
 
-    /*  Mobile Optimization */
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-        border-radius: 16px;
-      }
-      h1 {
-        font-size: 22px;
-      }
-      textarea {
-        font-size: 14px;
-        height: 70px;
-      }
-      button {
-        font-size: 14px;
-        padding: 8px 16px;
-      }
-      .answer-list li {
-        font-size: 14px;
-      }
-    }
-  </style>
+        .copy-button.copied {
+            background-color: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .download-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .copy-button svg, .download-button svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .copy-button.copied svg {
+            stroke: white;
+        }
+
+        .message-content ol {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .message-content li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 12px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .code-header {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .input-container {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+        }
+
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mode-selector-input {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .mode-chip {
+            padding: 6px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background-color: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .mode-chip:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .mode-chip.active {
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
+        }
+
+        .input-row {
+            position: relative;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 14px 50px 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .input-box:focus {
+            border-color: var(--text-secondary);
+        }
+
+        .send-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background-color: var(--button-hover);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 15px;
+        }
+
+        .error-message {
+            background-color: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .error-message {
+                background-color: #3a1a1a;
+                color: #ff6b6b;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                padding: 12px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .copy-button {
+                font-size: 11px;
+                padding: 5px 8px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚡ TechPrep AI</h1>
-    <form method="POST">
-      <textarea name="question" placeholder="Enter your technical question...">{{ question }}</textarea>
+    <div class="header">
+        <h1>TechPrep AI</h1>
+    </div>
 
-      <div class="mode-select">
-        <label><input type="radio" name="mode" value="normal" checked> Normal</label>
-        <label><input type="radio" name="mode" value="simple"> Simplified</label>
-      </div>
+    <div class="chat-container" id="chatContainer">
+        <div class="empty-state">
+            <h2>Welcome to TechPrep AI</h2>
+            <p>Ask any technical interview question and get precise, structured answers</p>
+        </div>
+    </div>
 
-      <div class="button-group">
-        <button type="submit">Generate Answer</button>
-        <button type="submit" name="suggest">Suggest Topic</button>
-      </div>
-    </form>
+    <div class="input-container">
+        <div class="input-wrapper">
+            <div class="mode-selector-input">
+                <div class="mode-chip active" id="beginnerChip">Beginner</div>
+                <div class="mode-chip" id="advancedChip">Advanced</div>
+            </div>
+            <div class="input-row">
+                <textarea 
+                    id="inputBox" 
+                    class="input-box" 
+                    placeholder="Ask a technical question..."
+                    rows="1"
+                ></textarea>
+                <button id="sendButton" class="send-button">
+                    ➤
+                </button>
+            </div>
+        </div>
+    </div>
 
-    {% if message %}
-      <p class="message">{{ message }}</p>
-    {% endif %}
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        const inputBox = document.getElementById('inputBox');
+        const sendButton = document.getElementById('sendButton');
+        const beginnerChip = document.getElementById('beginnerChip');
+        const advancedChip = document.getElementById('advancedChip');
 
-    {% if answer_items %}
-      <div class="output-box" id="answerBox">
-        <strong>Answer:</strong><br><br>
-        <ol class="answer-list">
-          {% for item in answer_items %}
-            <li>{{ item }}</li>
-          {% endfor %}
-        </ol>
-      </div>
+        let isProcessing = false;
+        let currentMode = 'beginner'; // Default mode
 
-      <div class="action-buttons">
-        <button id="copyBtn" type="button">Copy Answer</button>
-        <form action="/download" method="POST" style="display:inline;">
-          <input type="hidden" name="answer_text" value="{{ '\n'.join(answer_items) }}">
-          <button type="submit">Download as PDF</button>
-        </form>
-      </div>
-    {% endif %}
-  </div>
+        // Load saved mode from localStorage
+        const savedMode = localStorage.getItem('techprepMode');
+        if (savedMode) {
+            currentMode = savedMode;
+            updateModeChips();
+        }
 
-  <script>
-    const copyBtn = document.getElementById("copyBtn");
-    copyBtn?.addEventListener("click", () => {
-      const text = document.getElementById("answerBox").innerText;
-      navigator.clipboard.writeText(text);
-      copyBtn.innerText = "Successfully Copied!";
-      setTimeout(() => (copyBtn.innerText = "Copy Answer"), 2000);
-    });
-  </script>
+        // Mode chip handlers
+        beginnerChip.addEventListener('click', () => {
+            currentMode = 'beginner';
+            localStorage.setItem('techprepMode', 'beginner');
+            updateModeChips();
+        });
+
+        advancedChip.addEventListener('click', () => {
+            currentMode = 'advanced';
+            localStorage.setItem('techprepMode', 'advanced');
+            updateModeChips();
+        });
+
+        function updateModeChips() {
+            if (currentMode === 'beginner') {
+                beginnerChip.classList.add('active');
+                advancedChip.classList.remove('active');
+            } else {
+                advancedChip.classList.add('active');
+                beginnerChip.classList.remove('active');
+            }
+        }
+
+        // Auto-resize textarea
+        inputBox.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+
+        // Send on Enter (Shift+Enter for new line)
+        inputBox.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendButton.addEventListener('click', sendMessage);
+
+        async function sendMessage() {
+            const question = inputBox.value.trim();
+            
+            if (!question || isProcessing) return;
+
+            isProcessing = true;
+            sendButton.disabled = true;
+
+            // Clear empty state
+            const emptyState = chatContainer.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            // Clear previous messages
+            chatContainer.innerHTML = '';
+
+            // Add user message
+            addMessage(question, 'user');
+
+            // Clear input
+            inputBox.value = '';
+            inputBox.style.height = 'auto';
+
+            // Show loading
+            const loadingMsg = addLoadingMessage();
+
+            try {
+                const response = await fetch('/api/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        question: question,
+                        mode: currentMode 
+                    })
+                });
+
+                const data = await response.json();
+
+                // Remove loading
+                loadingMsg.remove();
+
+                if (data.success) {
+                    addAIMessage(data.answer, data.code, data.language);
+                } else {
+                    addErrorMessage(data.error || 'Failed to get response');
+                }
+            } catch (error) {
+                loadingMsg.remove();
+                addErrorMessage('Network error. Please try again.');
+            } finally {
+                isProcessing = false;
+                sendButton.disabled = false;
+                inputBox.focus();
+            }
+        }
+
+        function addMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            scrollToBottom();
+            
+            return messageDiv;
+        }
+
+        function addAIMessage(answer, code, language) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            // Add button group (Copy and Download)
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'button-group';
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-button';
+            copyBtn.innerHTML = `
+                <svg viewBox="0 0 24 24">
+                    <path d="M16 4H2v12h14M8 8h12v12H8z"/>
+                </svg>
+            `;
+            copyBtn.title = 'Copy';
+            copyBtn.onclick = function() {
+                copyToClipboard(answer, code, copyBtn);
+            };
+            buttonGroup.appendChild(copyBtn);
+            
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'download-button';
+            downloadBtn.innerHTML = `
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+            `;
+            downloadBtn.title = 'Download PDF';
+            downloadBtn.onclick = function() {
+                downloadPDF(answer, code, language, downloadBtn);
+            };
+            buttonGroup.appendChild(downloadBtn);
+            
+            contentDiv.appendChild(buttonGroup);
+            
+            // Parse numbered points
+            const points = answer.split('\n').filter(line => line.trim());
+            
+            if (points.length > 0 && points[0].match(/^\d+\./)) {
+                const ol = document.createElement('ol');
+                points.forEach(point => {
+                    const li = document.createElement('li');
+                    li.textContent = point.replace(/^\d+\.\s*/, '');
+                    ol.appendChild(li);
+                });
+                contentDiv.appendChild(ol);
+            } else {
+                const textDiv = document.createElement('div');
+                textDiv.style.paddingTop = '8px';
+                textDiv.textContent = answer;
+                contentDiv.appendChild(textDiv);
+            }
+            
+            // Add code block if present
+            if (code) {
+                const codeBlock = document.createElement('div');
+                codeBlock.className = 'code-block';
+                
+                const codeHeader = document.createElement('div');
+                codeHeader.className = 'code-header';
+                codeHeader.textContent = `${language ? language.toUpperCase() : 'CODE'} EXAMPLE`;
+                
+                const codeContent = document.createElement('pre');
+                codeContent.textContent = code;
+                
+                codeBlock.appendChild(codeHeader);
+                codeBlock.appendChild(codeContent);
+                contentDiv.appendChild(codeBlock);
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function copyToClipboard(answer, code, button) {
+            let textToCopy = answer;
+            if (code) {
+                textToCopy += '\n\n' + code;
+            }
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function downloadPDF(answer, code, language, button) {
+            // Store current question for PDF download
+            const userMessages = document.querySelectorAll('.message.user');
+            const currentQuestion = userMessages[userMessages.length - 1]?.querySelector('.message-content')?.textContent || 'Question';
+            
+            button.disabled = true;
+            
+            fetch('/api/export-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: currentQuestion,
+                    answer: answer,
+                    code: code
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to download PDF');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'techprep_answer.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                button.disabled = false;
+            })
+            .catch(err => {
+                console.error('Error downloading PDF:', err);
+                button.disabled = false;
+            });
+        }
+
+        function addLoadingMessage() {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading';
+            loadingDiv.innerHTML = `
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            `;
+            
+            messageDiv.appendChild(loadingDiv);
+            chatContainer.appendChild(messageDiv);
+            scrollToBottom();
+            
+            return messageDiv;
+        }
+
+        function addErrorMessage(error) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = error;
+            
+            contentDiv.appendChild(errorDiv);
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Focus input on load
+        window.addEventListener('load', () => {
+            inputBox.focus();
+        });
+    </script>
 </body>
 </html>
