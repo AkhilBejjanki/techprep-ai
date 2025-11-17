@@ -22,6 +22,7 @@
             --input-bg: #ffffff;
             --button-hover: #e5e5e5;
             --code-bg: #f5f5f5;
+            --sidebar-bg: #f7f7f8;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -36,6 +37,7 @@
                 --input-bg: #2f2f2f;
                 --button-hover: #3f3f3f;
                 --code-bg: #1a1a1a;
+                --sidebar-bg: #1a1a1a;
             }
         }
 
@@ -44,6 +46,137 @@
             background-color: var(--bg-primary);
             color: var(--text-primary);
             height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-button:hover {
+            background-color: #357ae8;
+        }
+
+        .history-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .history-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .history-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .history-item:hover {
+            background-color: var(--button-hover);
+        }
+
+        .history-question {
+            font-size: 14px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .clear-history-btn {
+            margin: 16px;
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .clear-history-btn:hover {
+            background-color: var(--button-hover);
+        }
+
+        .main-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -55,12 +188,30 @@
             background-color: var(--bg-primary);
             text-align: center;
             z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header h1 {
             font-size: 28px;
             font-weight: 700;
             letter-spacing: -0.5px;
+            flex: 1;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--button-hover);
         }
 
         .chat-container {
@@ -94,6 +245,7 @@
             border-radius: 12px;
             max-width: 80%;
             word-wrap: break-word;
+            position: relative;
         }
 
         .message.user .message-content {
@@ -104,62 +256,8 @@
         .message.ai .message-content {
             background-color: var(--ai-msg-bg);
             border: 1px solid var(--border-color);
-            position: relative;
-            padding-top: 44px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 8px;
-            position: absolute;
-            top: 12px;
-            right: 12px;
-        }
-
-        .copy-button, .download-button {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 8px;
-            cursor: pointer;
-            color: var(--text-primary);
-            transition: all 0.2s;
-            font-family: inherit;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-        }
-
-        .copy-button:hover, .download-button:hover {
-            background-color: var(--button-hover);
-        }
-
-        .copy-button.copied {
-            background-color: #4caf50;
-            color: white;
-            border-color: #4caf50;
-        }
-
-        .download-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .copy-button svg, .download-button svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .copy-button.copied svg {
-            stroke: white;
+            /* leave space for action icons */
+            padding-top: 48px;
         }
 
         .message-content ol {
@@ -170,6 +268,52 @@
         .message-content li {
             margin-bottom: 8px;
             line-height: 1.5;
+        }
+
+        /* Icon button group in top-right of AI responses */
+        .button-group {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .copy-button, .download-button {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: background-color 0.18s, transform 0.08s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+        .copy-button:hover, .download-button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-1px);
+        }
+
+        .copy-button.copied {
+            background-color: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .copy-button svg, .download-button svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .code-block {
@@ -340,8 +484,14 @@
         }
 
         @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
             .chat-container {
                 padding: 12px;
+                /* leave space for fixed input/footer */
+                padding-bottom: 140px;
             }
 
             .message-content {
@@ -356,37 +506,72 @@
                 font-size: 11px;
                 padding: 5px 8px;
             }
+
+            /* Make input container fixed on small screens so it's always visible */
+            .input-container {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 30;
+                padding: 12px 16px;
+                background-color: var(--bg-primary);
+                border-top: 1px solid var(--border-color);
+            }
+
+            .input-wrapper {
+                max-width: 100%;
+                margin: 0 12px;
+            }
+
+            .input-box {
+                padding-right: 56px; /* keep space for send button */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>TechPrep AI</h1>
-    </div>
-
-    <div class="chat-container" id="chatContainer">
-        <div class="empty-state">
-            <h2>Welcome to TechPrep AI</h2>
-            <p>Ask any technical interview question and get precise, structured answers</p>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div id="authSection"></div>
         </div>
+        <div class="history-section" id="historySection">
+            <div class="history-header">Recent Chats</div>
+            <div id="historyList"></div>
+        </div>
+        <button class="clear-history-btn" id="clearHistoryBtn" style="display: none;">Clear All History</button>
     </div>
 
-    <div class="input-container">
-        <div class="input-wrapper">
-            <div class="mode-selector-input">
-                <div class="mode-chip active" id="beginnerChip">Beginner</div>
-                <div class="mode-chip" id="advancedChip">Advanced</div>
+    <div class="main-content">
+        <div class="header">
+            <h1>TechPrep AI</h1>
+            <button class="logout-btn" id="logoutBtn" style="display: none;">Logout</button>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="empty-state">
+                <h2>Welcome</h2>
+                <p>Ask any technical interview question and get precise, structured answers</p>
             </div>
-            <div class="input-row">
-                <textarea 
-                    id="inputBox" 
-                    class="input-box" 
-                    placeholder="Ask a technical question..."
-                    rows="1"
-                ></textarea>
-                <button id="sendButton" class="send-button">
-                    ➤
-                </button>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <div class="mode-selector-input">
+                    <div class="mode-chip active" id="beginnerChip">Beginner</div>
+                    <div class="mode-chip" id="advancedChip">Advanced</div>
+                </div>
+                <div class="input-row">
+                    <textarea 
+                        id="inputBox" 
+                        class="input-box" 
+                        placeholder="Ask a technical question..."
+                        rows="1"
+                    ></textarea>
+                    <button id="sendButton" class="send-button">
+                        ➤
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -397,18 +582,117 @@
         const sendButton = document.getElementById('sendButton');
         const beginnerChip = document.getElementById('beginnerChip');
         const advancedChip = document.getElementById('advancedChip');
+        const authSection = document.getElementById('authSection');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
         let isProcessing = false;
-        let currentMode = 'beginner'; // Default mode
+        let currentMode = 'beginner';
+        let currentUser = null;
 
-        // Load saved mode from localStorage
+        // Check authentication status
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/user');
+                const data = await response.json();
+                
+                if (data.logged_in) {
+                    currentUser = data;
+                    showUserProfile(data);
+                    loadHistory();
+                } else {
+                    showLoginButton();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                showLoginButton();
+            }
+        }
+
+        function showUserProfile(user) {
+            authSection.innerHTML = `
+                <div class="user-profile">
+                    <img src="${user.picture}" alt="${user.name}" class="user-avatar">
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-email">${user.email}</div>
+                    </div>
+                </div>
+            `;
+            logoutBtn.style.display = 'block';
+            clearHistoryBtn.style.display = 'block';
+        }
+
+        function showLoginButton() {
+            authSection.innerHTML = `
+                <button class="login-button" onclick="window.location.href='/login'">
+                    <svg width="18" height="18" viewBox="0 0 18 18">
+                        <path fill="currentColor" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/>
+                        <path fill="currentColor" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+                        <path fill="currentColor" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/>
+                        <path fill="currentColor" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+            `;
+            logoutBtn.style.display = 'none';
+            clearHistoryBtn.style.display = 'none';
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+                
+                if (data.history && data.history.length > 0) {
+                    historyList.innerHTML = data.history.map(item => `
+                        <div class="history-item" onclick="loadHistoryItem(${item.id})">
+                            <div class="history-question">${item.question}</div>
+                            <div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    historyList.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px; padding: 12px;">No history yet</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load history:', error);
+            }
+        }
+
+        function loadHistoryItem(id) {
+            // Find the history item and display it
+            fetch('/api/history')
+                .then(res => res.json())
+                .then(data => {
+                    const item = data.history.find(h => h.id === id);
+                    if (item) {
+                        chatContainer.innerHTML = '';
+                        addMessage(item.question, 'user');
+                        addAIMessage(item.answer, item.code, item.language);
+                    }
+                });
+        }
+
+        logoutBtn.addEventListener('click', () => {
+            window.location.href = '/logout';
+        });
+
+        clearHistoryBtn.addEventListener('click', async () => {
+            if (confirm('Are you sure you want to clear all history?')) {
+                await fetch('/api/history/clear', { method: 'POST' });
+                loadHistory();
+                chatContainer.innerHTML = '<div class="empty-state"><h2>Welcome to TechPrep AI</h2><p>Ask any technical interview question</p></div>';
+            }
+        });
+
+        // Load saved mode
         const savedMode = localStorage.getItem('techprepMode');
         if (savedMode) {
             currentMode = savedMode;
             updateModeChips();
         }
 
-        // Mode chip handlers
         beginnerChip.addEventListener('click', () => {
             currentMode = 'beginner';
             localStorage.setItem('techprepMode', 'beginner');
@@ -431,13 +715,11 @@
             }
         }
 
-        // Auto-resize textarea
         inputBox.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 150) + 'px';
         });
 
-        // Send on Enter (Shift+Enter for new line)
         inputBox.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -455,23 +737,16 @@
             isProcessing = true;
             sendButton.disabled = true;
 
-            // Clear empty state
             const emptyState = chatContainer.querySelector('.empty-state');
             if (emptyState) {
                 emptyState.remove();
             }
 
-            // Clear previous messages
             chatContainer.innerHTML = '';
-
-            // Add user message
             addMessage(question, 'user');
-
-            // Clear input
             inputBox.value = '';
             inputBox.style.height = 'auto';
 
-            // Show loading
             const loadingMsg = addLoadingMessage();
 
             try {
@@ -487,12 +762,13 @@
                 });
 
                 const data = await response.json();
-
-                // Remove loading
                 loadingMsg.remove();
 
                 if (data.success) {
                     addAIMessage(data.answer, data.code, data.language);
+                    if (currentUser) {
+                        loadHistory();
+                    }
                 } else {
                     addErrorMessage(data.error || 'Failed to get response');
                 }
@@ -524,45 +800,43 @@
         function addAIMessage(answer, code, language) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message ai';
-            
+
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
-            
-            // Add button group (Copy and Download)
+
+            // Button group (icon-only)
             const buttonGroup = document.createElement('div');
             buttonGroup.className = 'button-group';
-            
+
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-button';
+            copyBtn.title = 'Copy answer';
             copyBtn.innerHTML = `
-                <svg viewBox="0 0 24 24">
-                    <path d="M16 4H2v12h14M8 8h12v12H8z"/>
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M16 4H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" stroke="currentColor"/>
+                    <rect x="4" y="4" width="12" height="12" rx="2" ry="2" stroke="currentColor" fill="none"></rect>
                 </svg>
             `;
-            copyBtn.title = 'Copy';
-            copyBtn.onclick = function() {
-                copyToClipboard(answer, code, copyBtn);
-            };
+            copyBtn.onclick = function() { copyToClipboard(answer, code, copyBtn); };
             buttonGroup.appendChild(copyBtn);
-            
+
             const downloadBtn = document.createElement('button');
             downloadBtn.className = 'download-button';
+            downloadBtn.title = 'Download PDF';
             downloadBtn.innerHTML = `
-                <svg viewBox="0 0 24 24">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor"/>
+                    <path d="M7 10l5 5 5-5" stroke="currentColor"/>
+                    <path d="M12 15V3" stroke="currentColor"/>
                 </svg>
             `;
-            downloadBtn.title = 'Download PDF';
-            downloadBtn.onclick = function() {
-                downloadPDF(answer, code, language, downloadBtn);
-            };
+            downloadBtn.onclick = function() { downloadPDF(answer, code, language, downloadBtn); };
             buttonGroup.appendChild(downloadBtn);
-            
+
             contentDiv.appendChild(buttonGroup);
-            
-            // Parse numbered points
+
+            // Answer points
             const points = answer.split('\n').filter(line => line.trim());
-            
             if (points.length > 0 && points[0].match(/^\d+\./)) {
                 const ol = document.createElement('ol');
                 points.forEach(point => {
@@ -577,24 +851,24 @@
                 textDiv.textContent = answer;
                 contentDiv.appendChild(textDiv);
             }
-            
-            // Add code block if present
+
+            // Code block
             if (code) {
                 const codeBlock = document.createElement('div');
                 codeBlock.className = 'code-block';
-                
+
                 const codeHeader = document.createElement('div');
                 codeHeader.className = 'code-header';
                 codeHeader.textContent = `${language ? language.toUpperCase() : 'CODE'} EXAMPLE`;
-                
+
                 const codeContent = document.createElement('pre');
                 codeContent.textContent = code;
-                
+
                 codeBlock.appendChild(codeHeader);
                 codeBlock.appendChild(codeContent);
                 contentDiv.appendChild(codeBlock);
             }
-            
+
             messageDiv.appendChild(contentDiv);
             chatContainer.appendChild(messageDiv);
             scrollToBottom();
@@ -605,24 +879,25 @@
             if (code) {
                 textToCopy += '\n\n' + code;
             }
-            
+
             navigator.clipboard.writeText(textToCopy).then(() => {
                 button.classList.add('copied');
+                // small visual pulse
                 setTimeout(() => {
                     button.classList.remove('copied');
-                }, 2000);
+                }, 1400);
             }).catch(err => {
                 console.error('Failed to copy:', err);
             });
         }
 
         function downloadPDF(answer, code, language, button) {
-            // Store current question for PDF download
+            // Get current question from chat
             const userMessages = document.querySelectorAll('.message.user');
             const currentQuestion = userMessages[userMessages.length - 1]?.querySelector('.message-content')?.textContent || 'Question';
             
             button.disabled = true;
-            
+
             fetch('/api/export-pdf', {
                 method: 'POST',
                 headers: {
@@ -698,10 +973,11 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        // Focus input on load
+        // Initialize
+        checkAuth();
         window.addEventListener('load', () => {
             inputBox.focus();
         });
     </script>
 </body>
-</html>
+</html>"""
