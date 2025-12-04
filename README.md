@@ -4,8 +4,7 @@ AI-powered technical interview preparation platform built using **Python, Flask,
 
 TechPrep AI generates **structured technical answers**, includes **coding examples**, supports **Google login**, and provides a clean and responsive user interface.
 
-🔗 **Live Website:** https://techprep-ai-pf7n.onrender.com  
-📁 **GitHub Repo:** https://github.com/AkhilBejjanki/techprep-ai  
+🔗 **Live Website:** https://techprep-ai-pf7n.onrender.com   
 
 ---
 
