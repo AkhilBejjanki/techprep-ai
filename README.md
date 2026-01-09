@@ -23,7 +23,7 @@ TechPrep AI generates **structured technical answers**, includes **coding exampl
 
 ###  Google Authentication (OAuth 2.0)
 - Secure Google Sign-In  
-- Stores user email, name, and profile picture  
+- Stores user email, and name 
 - User-specific history protection  
 
 ###  User History System
