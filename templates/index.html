@@ -1,983 +1,670 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechPrep AI - Smart Technical Interview Assistant</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TechPrep AI - Interview Preparation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#b9dffe',
+              300: '#7cc4fd',
+              400: '#36a9fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            darkBg: '#0f172a',
+            darkSidebar: '#1e293b',
+            darkInput: '#334155'
+          }
         }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f7f7f8;
-            --text-primary: #000000;
-            --text-secondary: #6b6b6b;
-            --border-color: #e5e5e5;
-            --user-msg-bg: #f7f7f8;
-            --ai-msg-bg: #ffffff;
-            --input-bg: #ffffff;
-            --button-hover: #e5e5e5;
-            --code-bg: #f5f5f5;
-            --sidebar-bg: #f7f7f8;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-primary: #212121;
-                --bg-secondary: #2f2f2f;
-                --text-primary: #ececec;
-                --text-secondary: #b3b3b3;
-                --border-color: #3f3f3f;
-                --user-msg-bg: #2f2f2f;
-                --ai-msg-bg: #212121;
-                --input-bg: #2f2f2f;
-                --button-hover: #3f3f3f;
-                --code-bg: #1a1a1a;
-                --sidebar-bg: #1a1a1a;
-            }
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            width: 280px;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .sidebar-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            background-color: var(--bg-secondary);
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .user-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .user-email {
-            font-size: 12px;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .login-button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .login-button:hover {
-            background-color: #357ae8;
-        }
-
-        .history-section {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-        }
-
-        .history-header {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .history-item {
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            background-color: var(--bg-secondary);
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .history-item:hover {
-            background-color: var(--button-hover);
-        }
-
-        .history-question {
-            font-size: 14px;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .history-date {
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        .clear-history-btn {
-            margin: 16px;
-            padding: 10px;
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .clear-history-btn:hover {
-            background-color: var(--button-hover);
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .header {
-            padding: 20px 20px 16px 20px;
-            border-bottom: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-            text-align: center;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            flex: 1;
-        }
-
-        .logout-btn {
-            padding: 8px 16px;
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .logout-btn:hover {
-            background-color: var(--button-hover);
-        }
-
-        .chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            scroll-behavior: smooth;
-        }
-
-        .message {
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            gap: 12px;
-        }
-
-        .message.user {
-            justify-content: flex-end;
-        }
-
-        .message.ai {
-            justify-content: flex-start;
-        }
-
-        .message-content {
-            padding: 12px 16px;
-            border-radius: 12px;
-            max-width: 80%;
-            word-wrap: break-word;
-            position: relative;
-        }
-
-        .message.user .message-content {
-            background-color: var(--user-msg-bg);
-            border: 1px solid var(--border-color);
-        }
-
-        .message.ai .message-content {
-            background-color: var(--ai-msg-bg);
-            border: 1px solid var(--border-color);
-            /* leave space for action icons */
-            padding-top: 48px;
-        }
-
-        .message-content ol {
-            margin-left: 20px;
-            margin-top: 8px;
-        }
-
-        .message-content li {
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-
-        /* Icon button group in top-right of AI responses */
-        .button-group {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            display: flex;
-            gap: 8px;
-            z-index: 5;
-        }
-
-        .copy-button, .download-button {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            color: var(--text-primary);
-            transition: background-color 0.18s, transform 0.08s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-        }
-
-        .copy-button:hover, .download-button:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-1px);
-        }
-
-        .copy-button.copied {
-            background-color: #4caf50;
-            color: white;
-            border-color: #4caf50;
-        }
-
-        .copy-button svg, .download-button svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.6;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .code-block {
-            background-color: var(--code-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 12px;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .code-header {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .input-container {
-            padding: 16px 20px;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-        }
-
-        .input-wrapper {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .mode-selector-input {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .mode-chip {
-            padding: 6px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            background-color: var(--bg-secondary);
-            color: var(--text-secondary);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-            font-weight: 500;
-        }
-
-        .mode-chip:hover {
-            border-color: var(--text-primary);
-            color: var(--text-primary);
-        }
-
-        .mode-chip.active {
-            background-color: var(--text-primary);
-            color: var(--bg-primary);
-            border-color: var(--text-primary);
-        }
-
-        .input-row {
-            position: relative;
-        }
-
-        .input-box {
-            width: 100%;
-            padding: 14px 50px 14px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            background-color: var(--input-bg);
-            color: var(--text-primary);
-            font-size: 15px;
-            outline: none;
-            resize: none;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-
-        .input-box:focus {
-            border-color: var(--text-secondary);
-        }
-
-        .send-button {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 36px;
-            height: 36px;
-            border: none;
-            border-radius: 50%;
-            background-color: transparent;
-            color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: background-color 0.2s;
-        }
-
-        .send-button:hover:not(:disabled) {
-            background-color: var(--button-hover);
-        }
-
-        .send-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .loading {
-            display: flex;
-            gap: 4px;
-            padding: 12px 16px;
-        }
-
-        .loading-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--text-secondary);
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-
-        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state h2 {
-            font-size: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        .empty-state p {
-            font-size: 15px;
-        }
-
-        .error-message {
-            background-color: #fee;
-            color: #c00;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 8px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .error-message {
-                background-color: #3a1a1a;
-                color: #ff6b6b;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .chat-container {
-                padding: 12px;
-                /* leave space for fixed input/footer */
-                padding-bottom: 140px;
-            }
-
-            .message-content {
-                max-width: 85%;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .copy-button {
-                font-size: 11px;
-                padding: 5px 8px;
-            }
-
-            /* Make input container fixed on small screens so it's always visible */
-            .input-container {
-                position: fixed;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 30;
-                padding: 12px 16px;
-                background-color: var(--bg-primary);
-                border-top: 1px solid var(--border-color);
-            }
-
-            .input-wrapper {
-                max-width: 100%;
-                margin: 0 12px;
-            }
-
-            .input-box {
-                padding-right: 56px; /* keep space for send button */
-            }
-        }
-    </style>
+      }
+    }
+</script>
+<style>
+    .chat-container {
+      height: calc(100vh - 160px);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .code-block {
+      font-family: 'ui-monospace', SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @keyframes bounce-dot {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+    .loading-dot {
+      animation: bounce-dot 1.4s infinite ease-in-out both;
+    }
+    .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+    .loading-dot:nth-child(3) { animation-delay: 0s; }
+</style>
 </head>
-<body>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div id="authSection"></div>
-        </div>
-        <div class="history-section" id="historySection">
-            <div class="history-header">Recent Chats</div>
-            <div id="historyList"></div>
-        </div>
-        <button class="clear-history-btn" id="clearHistoryBtn" style="display: none;">Clear All History</button>
+<body class="bg-slate-50 dark:bg-darkBg text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed md:relative z-40 md:z-auto -translate-x-full md:translate-x-0 transition-transform duration-200 flex flex-col w-64 h-full bg-slate-100 dark:bg-darkSidebar border-r border-slate-200 dark:border-slate-800">
+  <!-- Sidebar Header: New Chat -->
+  <div class="p-4 border-b border-slate-200 dark:border-slate-800">
+    <button id="newChatBtn" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-darkInput border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-all font-medium">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+      New Chat
+    </button>
+  </div>
+
+  <!-- Sidebar History -->
+  <nav class="flex-1 overflow-y-auto p-3 space-y-1 no-scrollbar">
+    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-2 py-1">Recent Sessions</div>
+    <div id="historyList">
+      <div class="px-3 py-2 text-sm text-slate-400">No history yet</div>
     </div>
+  </nav>
 
-    <div class="main-content">
-        <div class="header">
-            <h1>TechPrep AI</h1>
-            <button class="logout-btn" id="logoutBtn" style="display: none;">Logout</button>
-        </div>
+  <!-- Clear History -->
+  <div id="clearHistoryWrapper" class="px-3 pb-2 hidden">
+    <button id="clearHistoryBtn" class="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors border border-red-200 dark:border-red-800/40">
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+      Clear All History
+    </button>
+  </div>
 
-        <div class="chat-container" id="chatContainer">
-            <div class="empty-state">
-                <h2>Welcome</h2>
-                <p>Ask any technical interview question and get precise, structured answers</p>
-            </div>
-        </div>
+  <!-- Sidebar Footer -->
+  <div class="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
+    <!-- Dark Mode Toggle -->
+    <button id="themeToggle" class="flex items-center gap-3 w-full px-3 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
+      <svg id="moonIcon" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+      <svg id="sunIcon" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l.707-.707M6.343 17.657l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+      <span id="themeText">Dark Mode</span>
+    </button>
 
-        <div class="input-container">
-            <div class="input-wrapper">
-                <div class="mode-selector-input">
-                    <div class="mode-chip active" id="beginnerChip">Beginner</div>
-                    <div class="mode-chip" id="advancedChip">Advanced</div>
-                </div>
-                <div class="input-row">
-                    <textarea 
-                        id="inputBox" 
-                        class="input-box" 
-                        placeholder="Ask a technical question..."
-                        rows="1"
-                    ></textarea>
-                    <button id="sendButton" class="send-button">
-                        ➤
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- User Profile / Login -->
+    <div id="authSection">
+      <!-- Populated by JS -->
     </div>
+  </div>
+</aside>
 
-    <script>
-        const chatContainer = document.getElementById('chatContainer');
-        const inputBox = document.getElementById('inputBox');
-        const sendButton = document.getElementById('sendButton');
-        const beginnerChip = document.getElementById('beginnerChip');
-        const advancedChip = document.getElementById('advancedChip');
-        const authSection = document.getElementById('authSection');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const historyList = document.getElementById('historyList');
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col relative bg-white dark:bg-darkBg">
+  <!-- Top Navigation -->
+  <header class="flex items-center justify-between px-4 md:px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+    <div class="flex items-center gap-2">
+      <!-- Mobile Menu Toggle -->
+      <button id="mobileMenuBtn" class="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" onclick="toggleMobileSidebar()">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+      </button>
+      <h1 class="text-xl font-bold text-brand-600 dark:text-brand-500 tracking-tight">TechPrep AI</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <!-- Mode Selector -->
+      <div class="flex items-center gap-1 bg-slate-100 dark:bg-darkInput rounded-lg p-1">
+        <button id="beginnerChip" class="px-3 py-1.5 text-xs font-medium rounded-md transition-all bg-white dark:bg-slate-600 text-brand-600 dark:text-brand-400 shadow-sm">Beginner</button>
+        <button id="advancedChip" class="px-3 py-1.5 text-xs font-medium rounded-md transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700">Advanced</button>
+      </div>
+      <span class="hidden sm:inline text-xs px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 rounded-full font-medium">Interview Ready</span>
+    </div>
+  </header>
 
-        let isProcessing = false;
-        let currentMode = 'beginner';
-        let currentUser = null;
+  <!-- Chat Conversation View -->
+  <div id="chatContainer" class="flex-1 overflow-y-auto chat-container p-4 md:p-8 space-y-8 no-scrollbar">
+    <!-- Empty State -->
+    <div id="emptyState" class="flex flex-col items-center justify-center h-full text-center">
+      <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mb-6">
+        <svg class="h-8 w-8 text-brand-600 dark:text-brand-400" fill="currentColor" viewBox="0 0 20 20">
+          <path clip-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" fill-rule="evenodd"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Welcome to TechPrep AI</h2>
+      <p class="text-slate-500 dark:text-slate-400 max-w-md">Ask any technical interview question and get precise, structured answers with code examples.</p>
+    </div>
+  </div>
 
-        // Check authentication status
-        async function checkAuth() {
-            try {
-                const response = await fetch('/api/user');
-                const data = await response.json();
-                
-                if (data.logged_in) {
-                    currentUser = data;
-                    showUserProfile(data);
-                    loadHistory();
-                } else {
-                    showLoginButton();
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                showLoginButton();
-            }
+  <!-- Bottom Input Area -->
+  <footer class="p-4 md:px-8 md:pb-6 bg-gradient-to-t from-white via-white dark:from-darkBg dark:via-darkBg to-transparent">
+    <div class="max-w-3xl mx-auto relative group">
+      <div class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-blue-400 rounded-2xl blur opacity-10 group-focus-within:opacity-25 transition duration-500"></div>
+      <div class="relative flex items-end gap-2 bg-white dark:bg-darkInput border border-slate-200 dark:border-slate-700 rounded-2xl p-2 shadow-xl">
+        <textarea id="inputBox" class="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-slate-800 dark:text-slate-100 resize-none py-3 px-4 max-h-48 text-sm" placeholder="Ask a technical question or paste a problem..." rows="1"></textarea>
+        <button id="sendButton" class="flex-shrink-0 p-3 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-all shadow-lg shadow-brand-500/30">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </button>
+      </div>
+      <p class="mt-3 text-center text-xs text-slate-400">TechPrep AI can make mistakes. Verify important technical details.</p>
+    </div>
+  </footer>
+</main>
+
+</div>
+
+<script>
+// DOM Elements
+const chatContainer = document.getElementById('chatContainer');
+const emptyState = document.getElementById('emptyState');
+const inputBox = document.getElementById('inputBox');
+const sendButton = document.getElementById('sendButton');
+const beginnerChip = document.getElementById('beginnerChip');
+const advancedChip = document.getElementById('advancedChip');
+const authSection = document.getElementById('authSection');
+const historyList = document.getElementById('historyList');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+const clearHistoryWrapper = document.getElementById('clearHistoryWrapper');
+const newChatBtn = document.getElementById('newChatBtn');
+const themeToggle = document.getElementById('themeToggle');
+const moonIcon = document.getElementById('moonIcon');
+const sunIcon = document.getElementById('sunIcon');
+const themeText = document.getElementById('themeText');
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+let isProcessing = false;
+let currentMode = 'beginner';
+let currentUser = null;
+
+// ── Theme Toggle ────────────────────────────────────────────
+const htmlEl = document.documentElement;
+
+// Load saved theme
+const savedTheme = localStorage.getItem('techprepTheme');
+if (savedTheme === 'dark') {
+  htmlEl.classList.remove('light');
+  htmlEl.classList.add('dark');
+  moonIcon.classList.add('hidden');
+  sunIcon.classList.remove('hidden');
+  themeText.innerText = 'Light Mode';
+}
+
+themeToggle.addEventListener('click', () => {
+  if (htmlEl.classList.contains('dark')) {
+    htmlEl.classList.remove('dark');
+    htmlEl.classList.add('light');
+    moonIcon.classList.remove('hidden');
+    sunIcon.classList.add('hidden');
+    themeText.innerText = 'Dark Mode';
+    localStorage.setItem('techprepTheme', 'light');
+  } else {
+    htmlEl.classList.remove('light');
+    htmlEl.classList.add('dark');
+    moonIcon.classList.add('hidden');
+    sunIcon.classList.remove('hidden');
+    themeText.innerText = 'Light Mode';
+    localStorage.setItem('techprepTheme', 'dark');
+  }
+});
+
+// ── Mobile Sidebar Toggle ───────────────────────────────────
+function toggleMobileSidebar() {
+  sidebar.classList.toggle('-translate-x-full');
+  sidebarOverlay.classList.toggle('hidden');
+}
+
+// ── Mode Selector ───────────────────────────────────────────
+const savedMode = localStorage.getItem('techprepMode');
+if (savedMode) {
+  currentMode = savedMode;
+  updateModeChips();
+}
+
+beginnerChip.addEventListener('click', () => {
+  currentMode = 'beginner';
+  localStorage.setItem('techprepMode', 'beginner');
+  updateModeChips();
+});
+
+advancedChip.addEventListener('click', () => {
+  currentMode = 'advanced';
+  localStorage.setItem('techprepMode', 'advanced');
+  updateModeChips();
+});
+
+function updateModeChips() {
+  if (currentMode === 'beginner') {
+    beginnerChip.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-all bg-white dark:bg-slate-600 text-brand-600 dark:text-brand-400 shadow-sm';
+    advancedChip.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700';
+  } else {
+    advancedChip.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-all bg-white dark:bg-slate-600 text-brand-600 dark:text-brand-400 shadow-sm';
+    beginnerChip.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700';
+  }
+}
+
+// ── Authentication ──────────────────────────────────────────
+async function checkAuth() {
+  try {
+    const response = await fetch('/api/user');
+    const data = await response.json();
+    if (data.logged_in) {
+      currentUser = data;
+      showUserProfile(data);
+      loadHistory();
+    } else {
+      showLoginButton();
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    showLoginButton();
+  }
+}
+
+function showUserProfile(user) {
+  const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+  authSection.innerHTML = `
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3 min-w-0">
+        ${user.picture
+          ? `<img src="${user.picture}" alt="${user.name}" class="w-8 h-8 rounded-full flex-shrink-0" referrerpolicy="no-referrer">`
+          : `<div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">${initials}</div>`
         }
+        <span class="text-sm font-medium truncate">${user.name}</span>
+      </div>
+      <button onclick="window.location.href='/logout'" class="p-1.5 text-slate-400 hover:text-red-500 transition-colors" title="Logout">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+      </button>
+    </div>
+  `;
+  clearHistoryWrapper.classList.remove('hidden');
+}
 
-        function showUserProfile(user) {
-            authSection.innerHTML = `
-                <div class="user-profile">
-                    <img src="${user.picture}" alt="${user.name}" class="user-avatar">
-                    <div class="user-info">
-                        <div class="user-name">${user.name}</div>
-                        <div class="user-email">${user.email}</div>
-                    </div>
-                </div>
-            `;
-            logoutBtn.style.display = 'block';
-            clearHistoryBtn.style.display = 'block';
-        }
+function showLoginButton() {
+  authSection.innerHTML = `
+    <button onclick="window.location.href='/login'" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition-colors">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+        <path fill="currentColor" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/>
+        <path fill="currentColor" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+        <path fill="currentColor" d="M3.88 10.78A5.54 5.54 0 013.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 000 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/>
+        <path fill="currentColor" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/>
+      </svg>
+      Sign in with Google
+    </button>
+  `;
+  clearHistoryWrapper.classList.add('hidden');
+}
 
-        function showLoginButton() {
-            authSection.innerHTML = `
-                <button class="login-button" onclick="window.location.href='/login'">
-                    <svg width="18" height="18" viewBox="0 0 18 18">
-                        <path fill="currentColor" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/>
-                        <path fill="currentColor" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/>
-                        <path fill="currentColor" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/>
-                        <path fill="currentColor" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/>
-                    </svg>
-                    Sign in with Google
-                </button>
-            `;
-            logoutBtn.style.display = 'none';
-            clearHistoryBtn.style.display = 'none';
-        }
+// ── Chat History ────────────────────────────────────────────
+async function loadHistory() {
+  try {
+    const response = await fetch('/api/history');
+    const data = await response.json();
+    if (data.history && data.history.length > 0) {
+      historyList.innerHTML = data.history.map((item, index) => {
+        const truncated = item.question.length > 30 ? item.question.substring(0, 30) + '...' : item.question;
+        return `
+          <div class="group flex items-center rounded-lg cursor-pointer transition-colors ${index === 0 ? 'bg-brand-100 dark:bg-brand-900/30' : 'hover:bg-slate-200 dark:hover:bg-slate-800'}">
+            <a class="flex-1 block px-3 py-2 text-sm truncate ${index === 0 ? 'text-brand-700 dark:text-brand-400 font-medium' : 'text-slate-600 dark:text-slate-400'}" href="#" onclick="event.preventDefault(); loadHistoryItem(${item.id})">
+              ${truncated}
+            </a>
+            <button onclick="event.stopPropagation(); deleteHistoryItem(${item.id})" class="hidden group-hover:flex items-center justify-center p-1 mr-2 text-slate-400 hover:text-red-500 rounded transition-colors" title="Delete">
+              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+    } else {
+      historyList.innerHTML = '<div class="px-3 py-2 text-sm text-slate-400">No history yet</div>';
+    }
+  } catch (error) {
+    console.error('Failed to load history:', error);
+  }
+}
 
-        async function loadHistory() {
-            try {
-                const response = await fetch('/api/history');
-                const data = await response.json();
-                
-                if (data.history && data.history.length > 0) {
-                    historyList.innerHTML = data.history.map(item => `
-                        <div class="history-item" onclick="loadHistoryItem(${item.id})">
-                            <div class="history-question">${item.question}</div>
-                            <div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>
-                        </div>
-                    `).join('');
-                } else {
-                    historyList.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px; padding: 12px;">No history yet</div>';
-                }
-            } catch (error) {
-                console.error('Failed to load history:', error);
-            }
-        }
+function loadHistoryItem(id) {
+  fetch('/api/history')
+    .then(res => res.json())
+    .then(data => {
+      const item = data.history.find(h => h.id === id);
+      if (item) {
+        clearChat();
+        addUserMessage(item.question);
+        addAIMessage(item.answer, item.code, item.language);
+      }
+    });
+  // Close mobile sidebar if open
+  if (window.innerWidth < 768) toggleMobileSidebar();
+}
 
-        function loadHistoryItem(id) {
-            // Find the history item and display it
-            fetch('/api/history')
-                .then(res => res.json())
-                .then(data => {
-                    const item = data.history.find(h => h.id === id);
-                    if (item) {
-                        chatContainer.innerHTML = '';
-                        addMessage(item.question, 'user');
-                        addAIMessage(item.answer, item.code, item.language);
-                    }
-                });
-        }
+async function deleteHistoryItem(id) {
+  try {
+    await fetch(`/api/history/${id}`, { method: 'DELETE' });
+    loadHistory();
+  } catch (error) {
+    console.error('Failed to delete history item:', error);
+  }
+}
 
-        logoutBtn.addEventListener('click', () => {
-            window.location.href = '/logout';
-        });
+clearHistoryBtn.addEventListener('click', async () => {
+  if (confirm('Are you sure you want to clear all history?')) {
+    await fetch('/api/history/clear', { method: 'POST' });
+    loadHistory();
+    resetToEmpty();
+  }
+});
 
-        clearHistoryBtn.addEventListener('click', async () => {
-            if (confirm('Are you sure you want to clear all history?')) {
-                await fetch('/api/history/clear', { method: 'POST' });
-                loadHistory();
-                chatContainer.innerHTML = '<div class="empty-state"><h2>Welcome to TechPrep AI</h2><p>Ask any technical interview question</p></div>';
-            }
-        });
+// ── New Chat ────────────────────────────────────────────────
+newChatBtn.addEventListener('click', () => {
+  resetToEmpty();
+  if (window.innerWidth < 768) toggleMobileSidebar();
+});
 
-        // Load saved mode
-        const savedMode = localStorage.getItem('techprepMode');
-        if (savedMode) {
-            currentMode = savedMode;
-            updateModeChips();
-        }
+function resetToEmpty() {
+  chatContainer.innerHTML = '';
+  chatContainer.appendChild(createEmptyState());
+  inputBox.value = '';
+  inputBox.style.height = 'auto';
+  inputBox.focus();
+}
 
-        beginnerChip.addEventListener('click', () => {
-            currentMode = 'beginner';
-            localStorage.setItem('techprepMode', 'beginner');
-            updateModeChips();
-        });
+function createEmptyState() {
+  const div = document.createElement('div');
+  div.id = 'emptyState';
+  div.className = 'flex flex-col items-center justify-center h-full text-center';
+  div.innerHTML = `
+    <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mb-6">
+      <svg class="h-8 w-8 text-brand-600 dark:text-brand-400" fill="currentColor" viewBox="0 0 20 20">
+        <path clip-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" fill-rule="evenodd"></path>
+      </svg>
+    </div>
+    <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Welcome to TechPrep AI</h2>
+    <p class="text-slate-500 dark:text-slate-400 max-w-md">Ask any technical interview question and get precise, structured answers with code examples.</p>
+  `;
+  return div;
+}
 
-        advancedChip.addEventListener('click', () => {
-            currentMode = 'advanced';
-            localStorage.setItem('techprepMode', 'advanced');
-            updateModeChips();
-        });
+// ── Input Handling ──────────────────────────────────────────
+inputBox.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 192) + 'px';
+});
 
-        function updateModeChips() {
-            if (currentMode === 'beginner') {
-                beginnerChip.classList.add('active');
-                advancedChip.classList.remove('active');
-            } else {
-                advancedChip.classList.add('active');
-                beginnerChip.classList.remove('active');
-            }
-        }
+inputBox.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
 
-        inputBox.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-        });
+sendButton.addEventListener('click', sendMessage);
 
-        inputBox.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+// ── Send Message ────────────────────────────────────────────
+async function sendMessage() {
+  const question = inputBox.value.trim();
+  if (!question || isProcessing) return;
 
-        sendButton.addEventListener('click', sendMessage);
+  isProcessing = true;
+  sendButton.disabled = true;
 
-        async function sendMessage() {
-            const question = inputBox.value.trim();
-            
-            if (!question || isProcessing) return;
+  clearChat();
+  addUserMessage(question);
+  inputBox.value = '';
+  inputBox.style.height = 'auto';
 
-            isProcessing = true;
-            sendButton.disabled = true;
+  const loadingEl = addLoadingMessage();
 
-            const emptyState = chatContainer.querySelector('.empty-state');
-            if (emptyState) {
-                emptyState.remove();
-            }
+  try {
+    const response = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, mode: currentMode })
+    });
 
-            chatContainer.innerHTML = '';
-            addMessage(question, 'user');
-            inputBox.value = '';
-            inputBox.style.height = 'auto';
+    const data = await response.json();
+    loadingEl.remove();
 
-            const loadingMsg = addLoadingMessage();
+    if (data.success) {
+      addAIMessage(data.answer, data.code, data.language);
+      if (currentUser) loadHistory();
+    } else {
+      addErrorMessage(data.error || 'Failed to get response');
+    }
+  } catch (error) {
+    loadingEl.remove();
+    addErrorMessage('Network error. Please try again.');
+  } finally {
+    isProcessing = false;
+    sendButton.disabled = false;
+    inputBox.focus();
+  }
+}
 
-            try {
-                const response = await fetch('/api/ask', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        question: question,
-                        mode: currentMode 
-                    })
-                });
+// ── Chat UI Builders ────────────────────────────────────────
+function clearChat() {
+  const empty = document.getElementById('emptyState');
+  if (empty) empty.remove();
+  // Remove all existing messages
+  chatContainer.querySelectorAll('[data-message]').forEach(el => el.remove());
+}
 
-                const data = await response.json();
-                loadingMsg.remove();
+function addUserMessage(text) {
+  const div = document.createElement('div');
+  div.setAttribute('data-message', 'user');
+  div.className = 'flex gap-4 max-w-3xl mx-auto w-full';
+  div.innerHTML = `
+    <div class="flex-shrink-0 w-8 h-8 rounded-md bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+      <svg class="h-5 w-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+    </div>
+    <div class="flex-1 pt-1">
+      <p class="text-slate-800 dark:text-slate-200 leading-relaxed">${escapeHtml(text)}</p>
+    </div>
+  `;
+  chatContainer.appendChild(div);
+  scrollToBottom();
+}
 
-                if (data.success) {
-                    addAIMessage(data.answer, data.code, data.language);
-                    if (currentUser) {
-                        loadHistory();
-                    }
-                } else {
-                    addErrorMessage(data.error || 'Failed to get response');
-                }
-            } catch (error) {
-                loadingMsg.remove();
-                addErrorMessage('Network error. Please try again.');
-            } finally {
-                isProcessing = false;
-                sendButton.disabled = false;
-                inputBox.focus();
-            }
-        }
+function addAIMessage(answer, code, language) {
+  const div = document.createElement('div');
+  div.setAttribute('data-message', 'ai');
+  div.className = 'flex gap-4 max-w-3xl mx-auto w-full';
 
-        function addMessage(text, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            contentDiv.textContent = text;
-            
-            messageDiv.appendChild(contentDiv);
-            chatContainer.appendChild(messageDiv);
-            scrollToBottom();
-            
-            return messageDiv;
-        }
+  // Build answer HTML
+  let answerHtml = '';
+  const points = answer.split('\n').filter(line => line.trim());
+  if (points.length > 0 && points[0].match(/^\d+\./)) {
+    answerHtml = '<div class="space-y-2">';
+    points.forEach(point => {
+      const cleaned = point.replace(/^\d+\.\s*/, '');
+      answerHtml += `<p class="text-slate-800 dark:text-slate-200 leading-relaxed"><span class="text-brand-600 dark:text-brand-400 font-semibold">${point.match(/^\d+\./)[0]}</span> ${escapeHtml(cleaned)}</p>`;
+    });
+    answerHtml += '</div>';
+  } else {
+    answerHtml = `<div class="text-slate-800 dark:text-slate-200 leading-relaxed">${escapeHtml(answer)}</div>`;
+  }
 
-        function addAIMessage(answer, code, language) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message ai';
+  // Build code block HTML
+  let codeHtml = '';
+  if (code) {
+    const lang = language ? language.toLowerCase() : 'code';
+    codeHtml = `
+      <div class="rounded-xl overflow-hidden bg-slate-900 dark:bg-black border border-slate-800 mt-4">
+        <div class="flex items-center justify-between px-4 py-2 bg-slate-800/50 border-b border-slate-700 text-xs text-slate-400">
+          <span>${lang}</span>
+          <button class="copy-code-btn hover:text-white transition-colors flex items-center gap-1" data-code="${encodeURIComponent(code)}">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+            <span class="copy-code-text">Copy code</span>
+          </button>
+        </div>
+        <pre class="p-4 text-sm code-block text-blue-100 overflow-x-auto"><code>${escapeHtml(code)}</code></pre>
+      </div>
+    `;
+  }
 
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
+  div.innerHTML = `
+    <div class="flex-shrink-0 w-8 h-8 rounded-md bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/20">
+      <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <path clip-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" fill-rule="evenodd"></path>
+      </svg>
+    </div>
+    <div class="flex-1 pt-1 space-y-4">
+      ${answerHtml}
+      ${codeHtml}
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 pt-2">
+        <button class="copy-answer-btn flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" data-answer="${encodeURIComponent(answer)}" data-code="${code ? encodeURIComponent(code) : ''}">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-answer-text">Copy</span>
+        </button>
+        <button class="download-pdf-btn flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" data-answer="${encodeURIComponent(answer)}" data-code="${code ? encodeURIComponent(code) : ''}" data-language="${language || ''}">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          PDF
+        </button>
+      </div>
+    </div>
+  `;
 
-            // Button group (icon-only)
-            const buttonGroup = document.createElement('div');
-            buttonGroup.className = 'button-group';
+  chatContainer.appendChild(div);
+  scrollToBottom();
 
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-button';
-            copyBtn.title = 'Copy answer';
-            copyBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M16 4H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" stroke="currentColor"/>
-                    <rect x="4" y="4" width="12" height="12" rx="2" ry="2" stroke="currentColor" fill="none"></rect>
-                </svg>
-            `;
-            copyBtn.onclick = function() { copyToClipboard(answer, code, copyBtn); };
-            buttonGroup.appendChild(copyBtn);
+  // Attach event listeners to new buttons
+  div.querySelectorAll('.copy-code-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const code = decodeURIComponent(this.dataset.code);
+      const textEl = this.querySelector('.copy-code-text');
+      navigator.clipboard.writeText(code).then(() => {
+        textEl.textContent = 'Copied!';
+        setTimeout(() => { textEl.textContent = 'Copy code'; }, 1400);
+      });
+    });
+  });
 
-            const downloadBtn = document.createElement('button');
-            downloadBtn.className = 'download-button';
-            downloadBtn.title = 'Download PDF';
-            downloadBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor"/>
-                    <path d="M7 10l5 5 5-5" stroke="currentColor"/>
-                    <path d="M12 15V3" stroke="currentColor"/>
-                </svg>
-            `;
-            downloadBtn.onclick = function() { downloadPDF(answer, code, language, downloadBtn); };
-            buttonGroup.appendChild(downloadBtn);
+  div.querySelector('.copy-answer-btn').addEventListener('click', function() {
+    let text = decodeURIComponent(this.dataset.answer);
+    if (this.dataset.code) text += '\n\n' + decodeURIComponent(this.dataset.code);
+    const textEl = this.querySelector('.copy-answer-text');
+    navigator.clipboard.writeText(text).then(() => {
+      textEl.textContent = 'Copied!';
+      setTimeout(() => { textEl.textContent = 'Copy'; }, 1400);
+    });
+  });
 
-            contentDiv.appendChild(buttonGroup);
+  div.querySelector('.download-pdf-btn').addEventListener('click', function() {
+    const userMsgs = chatContainer.querySelectorAll('[data-message="user"]');
+    const questionEl = userMsgs[userMsgs.length - 1]?.querySelector('p');
+    const question = questionEl ? questionEl.textContent : 'Question';
+    const answerText = decodeURIComponent(this.dataset.answer);
+    const codeText = this.dataset.code ? decodeURIComponent(this.dataset.code) : '';
 
-            // Answer points
-            const points = answer.split('\n').filter(line => line.trim());
-            if (points.length > 0 && points[0].match(/^\d+\./)) {
-                const ol = document.createElement('ol');
-                points.forEach(point => {
-                    const li = document.createElement('li');
-                    li.textContent = point.replace(/^\d+\.\s*/, '');
-                    ol.appendChild(li);
-                });
-                contentDiv.appendChild(ol);
-            } else {
-                const textDiv = document.createElement('div');
-                textDiv.style.paddingTop = '8px';
-                textDiv.textContent = answer;
-                contentDiv.appendChild(textDiv);
-            }
+    this.disabled = true;
+    fetch('/api/export-pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, answer: answerText, code: codeText })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('PDF export failed');
+      return res.blob();
+    })
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'techprep_answer.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+      this.disabled = false;
+    })
+    .catch(err => {
+      console.error('PDF download error:', err);
+      this.disabled = false;
+    });
+  });
+}
 
-            // Code block
-            if (code) {
-                const codeBlock = document.createElement('div');
-                codeBlock.className = 'code-block';
+function addLoadingMessage() {
+  const div = document.createElement('div');
+  div.setAttribute('data-message', 'loading');
+  div.className = 'flex gap-4 max-w-3xl mx-auto w-full';
+  div.innerHTML = `
+    <div class="flex-shrink-0 w-8 h-8 rounded-md bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/20">
+      <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <path clip-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" fill-rule="evenodd"></path>
+      </svg>
+    </div>
+    <div class="flex gap-1.5 pt-3">
+      <div class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 loading-dot"></div>
+      <div class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 loading-dot"></div>
+      <div class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 loading-dot"></div>
+    </div>
+  `;
+  chatContainer.appendChild(div);
+  scrollToBottom();
+  return div;
+}
 
-                const codeHeader = document.createElement('div');
-                codeHeader.className = 'code-header';
-                codeHeader.textContent = `${language ? language.toUpperCase() : 'CODE'} EXAMPLE`;
+function addErrorMessage(error) {
+  const div = document.createElement('div');
+  div.setAttribute('data-message', 'error');
+  div.className = 'flex gap-4 max-w-3xl mx-auto w-full';
+  div.innerHTML = `
+    <div class="flex-shrink-0 w-8 h-8 rounded-md bg-red-500 flex items-center justify-center">
+      <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+    </div>
+    <div class="flex-1 pt-1">
+      <div class="px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl text-red-700 dark:text-red-400 text-sm">${escapeHtml(error)}</div>
+    </div>
+  `;
+  chatContainer.appendChild(div);
+  scrollToBottom();
+}
 
-                const codeContent = document.createElement('pre');
-                codeContent.textContent = code;
+// ── Utilities ───────────────────────────────────────────────
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
 
-                codeBlock.appendChild(codeHeader);
-                codeBlock.appendChild(codeContent);
-                contentDiv.appendChild(codeBlock);
-            }
+function scrollToBottom() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
 
-            messageDiv.appendChild(contentDiv);
-            chatContainer.appendChild(messageDiv);
-            scrollToBottom();
-        }
-
-        function copyToClipboard(answer, code, button) {
-            let textToCopy = answer;
-            if (code) {
-                textToCopy += '\n\n' + code;
-            }
-
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                button.classList.add('copied');
-                // small visual pulse
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                }, 1400);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-            });
-        }
-
-        function downloadPDF(answer, code, language, button) {
-            // Get current question from chat
-            const userMessages = document.querySelectorAll('.message.user');
-            const currentQuestion = userMessages[userMessages.length - 1]?.querySelector('.message-content')?.textContent || 'Question';
-            
-            button.disabled = true;
-
-            fetch('/api/export-pdf', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    question: currentQuestion,
-                    answer: answer,
-                    code: code
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to download PDF');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'techprep_answer.pdf';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                button.disabled = false;
-            })
-            .catch(err => {
-                console.error('Error downloading PDF:', err);
-                button.disabled = false;
-            });
-        }
-
-        function addLoadingMessage() {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message ai';
-            
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'loading';
-            loadingDiv.innerHTML = `
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-            `;
-            
-            messageDiv.appendChild(loadingDiv);
-            chatContainer.appendChild(messageDiv);
-            scrollToBottom();
-            
-            return messageDiv;
-        }
-
-        function addErrorMessage(error) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message ai';
-            
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = error;
-            
-            contentDiv.appendChild(errorDiv);
-            messageDiv.appendChild(contentDiv);
-            chatContainer.appendChild(messageDiv);
-            scrollToBottom();
-        }
-
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // Initialize
-        checkAuth();
-        window.addEventListener('load', () => {
-            inputBox.focus();
-        });
-    </script>
+// ── Initialize ──────────────────────────────────────────────
+checkAuth();
+window.addEventListener('load', () => { inputBox.focus(); });
+</script>
 </body>
-</html>"""
+</html>
